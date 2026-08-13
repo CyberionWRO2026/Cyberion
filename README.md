@@ -44,11 +44,10 @@ All custom structural components are FDM-printed PETG. PETG was chosen over PLA 
 
 The chassis is split into two functional levels:
 
-| Level |                                                                      Contents                                                                      |   |   |   |
-|:-----:|:--------------------------------------------------------------------------------------------------------------------------------------------------:|---|---|---|
-| Lower | Ackermann steering linkage, JSUMO Titan drive motor, BTS7960 motor driver, LEGO differential, custom pinion, rear axle shafts, MG996R servo, esp32 |   |   |   |
-| Upper | Raspberry Pi 5, battery holders, IMU (BNO086)                                                                                                      |   |   |   |
-|       |                                                                                                                                                    |   |   |   |
+| Level |                                                                      Contents                                                                      |
+|:-----:|:--------------------------------------------------------------------------------------------------------------------------------------------------:|
+| Lower | Ackermann steering linkage, JSUMO Titan drive motor, BTS7960 motor driver, LEGO differential, custom pinion, rear axle shafts, MG996R servo, esp32 |
+| Upper |                                                    Raspberry Pi 5, battery holders, IMU (BNO086)                                                   |
 ## ⚡️ Electronic Systems
 
 Our robot's electronic architecture is built around a clear separation of responsibilities: a Raspberry Pi 5 handles all vision processing and high-level navigation, while an ESP32 microcontroller manages every time-critical control task — motor drive, steering, and sensor reading — in real time. These two processors communicate over a dedicated UART serial link, keeping vision latency completely isolated from motion control.
