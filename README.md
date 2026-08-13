@@ -144,6 +144,8 @@ We run two identical 4S packs in rotation: one powers the robot, the other charg
 | ESP32 3V3                   | BNO086 VIN                    | IMU supply              |
 | Battery +                   | BTS7960 B+                    | Motor power             |
 | Common GND                  | All components                | Single-point ground     |
+
+
 and the next Figure presents the complete electrical and electronic architecture of the robot, showing the power distribution paths, regulated voltage rails, communication interfaces, motor and steering control, and connections between the Raspberry Pi 5, ESP32, and all onboard sensors.
 
 <img width="1402" height="1122" alt="image" src="https://github.com/user-attachments/assets/dbc7804b-9491-4442-af88-4420a9d2f3ac" />
