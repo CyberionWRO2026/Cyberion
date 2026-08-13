@@ -11,6 +11,27 @@ Ibrahim Jneed & Lujain Alahmad form our hardware and electrical engineering duo.
 
 Together, we do not just build robots — we engineer solutions. Every decision we make is driven by data, testing, and a shared obsession with pushing our vehicle's performance to its absolute limit.
 
+## Executive Summary
+
+Cyberion is an autonomous vehicle built for the WRO Future Engineers 2026 competition. The vehicle features a rear-wheel-drive drivetrain powered by a JSUMO Titan 12V DC motor and an Ackermann steering mechanism actuated by an MG996R servo. The complete mechanical system was designed in SolidWorks and validated in Gazebo before any part was manufactured. Custom structural components are FDM-printed PETG, and the full software stack runs on a Raspberry Pi 5 communicating with an ESP32 for real-time motor and sensor control.
+
+## Design Methodology
+
+Requirements
+    ↓
+Concept Design (SolidWorks sketches + Gazebo kinematics check)
+    ↓
+Detailed Design (full SolidWorks assembly)
+    ↓
+Simulation Validation (URDF in Gazebo — steering geometry, CoG, clearances)
+    ↓
+Manufacturing (FDM 3D printing)
+    ↓
+Integration & Unit Testing
+    ↓
+System Testing (full laps, obstacle runs, parking)
+    ↓
+Performance Tuning
 
 ## ⚡️ Electronic Systems
 
