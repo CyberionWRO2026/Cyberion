@@ -171,3 +171,114 @@ and the next Figure presents the complete electrical and electronic architecture
 
 ### Codes
 
+#### ESP32 Motor Subscriber
+
+A micro-ROS firmware for the ESP32 that bridges ROS 2 Jazzy with the robot's hardware. It subscribes to `/cmd_vel` and drives the BTS7960 motor driver and steering servo, while publishing sensor data from 4× VL53L0X ToF sensors and a BNO086 IMU.
+
+##### Hardware
+
+| Component | Details |
+|---|---|
+| **Microcontroller** | ESP32 |
+| **Motor Driver** | BTS7960 |
+| **Steering** | Servo (PWM) |
+| **Distance Sensors** | 4× VL53L0X (Left / Front / Right / Back) |
+| **IMU** | BNO086 (I2C, NDOF rotation vector) |
+
+##### Pin Configuration
+
+| Pin | GPIO | Description |
+|---|---|---|
+| RPWM | 25 | Motor forward PWM |
+| LPWM | 26 | Motor reverse PWM |
+| R_EN | 27 | BTS7960 right enable |
+| L_EN | 14 | BTS7960 left enable |
+| SERVO_PIN | 13 | Steering servo |
+| TOF_SDA | 21 | I2C data |
+| TOF_SCL | 22 | I2C clock |
+| XSHUT_LEFT | 32 | ToF left shutdown |
+| XSHUT_FRONT | 33 | ToF front shutdown |
+| XSHUT_RIGHT | 4 | ToF right shutdown |
+| XSHUT_BACK | 15 | ToF back shutdown |
+
+##### ROS 2 Topics
+
+| Topic | Type | Direction |
+|---|---|---|
+| `/cmd_vel` | `geometry_msgs/Twist` | Subscribe |
+| `/tof_left` | `sensor_msgs/LaserScan` | Publish |
+| `/tof_front` | `sensor_msgs/LaserScan` | Publish |
+| `/tof_right` | `sensor_msgs/LaserScan` | Publish |
+| `/tof_back` | `sensor_msgs/LaserScan` | Publish |
+| `/imu` | `sensor_msgs/Imu` | Publish |
+| `/odom` | `nav_msgs/Odometry` | Publish |
+
+##### Requirements
+
+- Ubuntu 24.04
+- VS Code + PlatformIO Extension
+- ROS 2 Jazzy (for the micro-ROS agent)
+- ESP32 connected via USB
+
+##### Build & Flash Instructions
+
+###### 1. Extract the project
+
+```bash
+unzip esp32_motor_subscriber.zip
+cd esp32_motor_subscriber
+```
+
+###### 2. Open in VS Code
+
+```bash
+code .
+```
+
+> PlatformIO will automatically detect `platformio.ini` and install all required libraries including `micro_ros_platformio`, `ESP32Servo`, `VL53L0X`, and `SparkFun_BNO08x`. Wait until the installation completes.
+
+###### 3. Connect your ESP32
+
+Connect your ESP32 to your computer via USB, then verify the port:
+
+```bash
+ls /dev/ttyUSB* /dev/ttyACM*
+```
+
+If you get a permission error, run:
+
+```bash
+sudo usermod -aG dialout $USER
+```
+
+Then **log out and log back in**.
+
+###### 4. Build & Upload
+
+Click the **Upload** button (→) in the PlatformIO toolbar, or run:
+
+```bash
+pio run --target upload
+```
+
+###### 5. Monitor Serial Output
+
+```bash
+pio device monitor --baud 115200
+```
+
+## Running with ROS 2
+
+After flashing, start the micro-ROS agent on the Raspberry Pi to connect the ESP32 to the ROS 2 network:
+
+```bash
+ros2 run micro_ros_agent micro_ros_agent serial --dev /dev/ttyUSB0 -b 115200
+```
+
+> Replace `/dev/ttyUSB0` with your actual port from step 3.
+
+Then verify the topics are publishing:
+
+```bash
+ros2 topic hz /imu /tof_front /tof_left /tof_right /tof_back /odom
+```
