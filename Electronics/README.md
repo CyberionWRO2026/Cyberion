@@ -1,4 +1,4 @@
-<img width="255" height="324" alt="image" src="https://github.com/user-attachments/assets/98048663-94a7-45fe-b655-b2314c17eff2" />⚡️ Electronic Systems
+⚡️ Electronic Systems
 
 Our robot's electronic architecture is built around a clear separation of responsibilities: a Raspberry Pi 5 handles all vision processing and high-level navigation, while an ESP32 microcontroller manages every time-critical control task — motor drive, steering, and sensor reading — in real time. These two processors communicate over a dedicated UART serial link, keeping vision latency completely isolated from motion control.
 
