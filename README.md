@@ -150,9 +150,9 @@ and the next Figure presents the complete electrical and electronic architecture
 
 <img width="1402" height="1122" alt="image" src="https://github.com/user-attachments/assets/dbc7804b-9491-4442-af88-4420a9d2f3ac" />
 
-## src/
+## src
 
-### Simulation/
+### Simulation
 
 1. Extract `wro2026_sim.zip` to any directory on your Ubuntu 24.04 system.
 2. Open a terminal and navigate to the extracted folder:
@@ -169,5 +169,5 @@ and the next Figure presents the complete electrical and electronic architecture
 ```
 5. The simulator should now open successfully.
 
-### Codes/
+### Codes
 
