@@ -286,7 +286,7 @@ ros2_ws/src/motor_controller/
 
 ##### Nodes
 
-### `camera_subscriber` (`motor_controller.py`)
+###### `camera_subscriber` (`motor_controller.py`)
 Subscribes to `/camera` and publishes the detected color on `/detected_color`.
 
 | Topic | Type | Direction |
@@ -310,38 +310,46 @@ Subscribes to `/camera` and publishes the detected color on `/detected_color`.
 | `/fsm_state` | `std_msgs/String` | Publish |
 | `/lap_complete` | `std_msgs/Bool` | Publish |
 
-##### Build
+##### Build & Run
+
+###### Step 1 — Extract the workspace
+
+Extract `ros2_ws.zip` to any directory you prefer:
 
 ```bash
-cd ~/ros2_ws
+unzip ros2_ws.zip
+cd ros2_ws
+```
+
+###### Step 2 — Build the package
+
+```bash
 colcon build --packages-select motor_controller --symlink-install
 source install/setup.bash
 ```
 
 > Use `--symlink-install` so that changes to `params.yaml` and `motor_controller.py` take effect immediately without rebuilding.
 
-##### Running
+###### Step 3 — Start Gazebo (separate terminal)
 
-###### Step 1 — Start Gazebo (separate terminal)
+Extract `wro2026_sim.zip` to any directory you prefer, then run:
 
 ```bash
-cd ~/Desktop/wro2026_sim
+cd wro2026_sim
 export GZ_SIM_RESOURCE_PATH=$PWD/models:$PWD/worlds
 gz sim -r worlds/world.sdf
 ```
 
-###### Step 2 — Launch the bridge and both nodes
+###### Step 4 — Launch the bridge and both nodes
 
 **Open Challenge:**
 ```bash
-cd ~/ros2_ws
 source install/setup.bash
 ros2 launch motor_controller bridge.launch.py challenge_mode:=open
 ```
 
 **Obstacle Challenge:**
 ```bash
-cd ~/ros2_ws
 source install/setup.bash
 ros2 launch motor_controller bridge.launch.py challenge_mode:=obstacle
 ```
