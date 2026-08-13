@@ -19,7 +19,7 @@ Cyberion is an autonomous vehicle built for the WRO Future Engineers 2026 compet
 
 ```mermaid
 graph TD
-    A[Requirements] --> B[Concept Design\nSolidWorks sketches + Gazebo kinematics check]
+    A[Requirements] --> B[Concept Design\nSolidWorks sketches ]
     B --> C[Detailed Design\nFull SolidWorks assembly]
     C --> D[Simulation Validation\nURDF in Gazebo — steering geometry, CoG, clearances]
     D --> E[Manufacturing\nFDM 3D printing]
