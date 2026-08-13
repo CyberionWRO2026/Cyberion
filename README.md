@@ -48,6 +48,37 @@ The chassis is split into two functional levels:
 |:-----:|:--------------------------------------------------------------------------------------------------------------------------------------------------:|
 | Lower | Ackermann steering linkage, JSUMO Titan drive motor, BTS7960 motor driver, LEGO differential, custom pinion, rear axle shafts, MG996R servo, esp32 |
 | Upper |                                                    Raspberry Pi 5, battery holders, IMU (BNO086)                                                   |
+
+### Vehicle specifications:
+
+|            Parameter            |     Value     |
+|:-------------------------------:|:-------------:|
+| Footprint                       | 300 × 200 mm  |
+| Body width                      | 185 mm        |
+| Wheelbase                       | 170 mm        |
+| Front / rear track width        | 140 mm        |
+| Total mass (calculated)         | ~894 g        |
+| Front / rear weight split       | 37.2% / 62.8% |
+| Max CoG height (rollover limit) | 136.25 mm     |
+
+### 3D Printed Parts
+
+All parts are printed in PETG at 100% infill for structural components.
+
+|        Part Name        |     File in Repository     |                                              Location on Robot                                              |             STL            |
+|:-----------------------:|:--------------------------:|:-----------------------------------------------------------------------------------------------------------:|:--------------------------:|
+| Lower Chassis (Level 1) | base1.STL                  | Main structural base — houses drivetrain, steering, and servo                                               | base1.STL                  |
+| Upper Chassis (Level 2) | base2.STL                  | Top platform — holds Raspberry Pi 5 and battery                                                             | base2.STL                  |
+| Flange Bearing Housing  | Flange Bearing Housing.STL | Rear axle — holds 626RS bearings that support the rear axle shafts                                          | Flange Bearing Housing.STL |
+| Motor Holder            | Motor Holder .STL          | Lower chassis — mounts the JSUMO Titan DC motor in place                                                    | Motor Holder .STL          |
+| LEGO Wheel Adapter      | LEGOWHEEL.STL              | Rear axle — adapts LEGO axle shaft to the wheel hub                                                         | LEGOWHEEL.STL              |
+| Camera Housing          | camera housing.STL         | Front upper section — holds the Raspberry Pi Camera Module V2                                               | camera housing.STL         |
+| Steering Knuckle        | fix part for wheel.STL     | Front axle — rotates around the kingpin axis to steer each front wheel                                      | fix part for wheel.STL     |
+| Steering Arm            | new steering arm.STL       | Front axle — connects tie rod to the steering knuckle to form the Ackermann linkage                         | new steering arm.STL       |
+| Custom Pinion Gear      | pinion.STL                 | Lower chassis — transfers torque from the motor shaft to the LEGO differential (20T, M1, 20°)               | pinion.STL                 |
+| Servo Horn              | servo horn.STL             | Steering servo output shaft — links servo to the tie rod with a 20 mm effective arm length                  | servo horn.STL             |
+| Tie Rod                 | tie rod.STL                | Between servo horn and steering knuckles — transmits servo displacement to both front wheels simultaneously | tie rod.STL                |
+
 ## ⚡️ Electronic Systems
 
 Our robot's electronic architecture is built around a clear separation of responsibilities: a Raspberry Pi 5 handles all vision processing and high-level navigation, while an ESP32 microcontroller manages every time-critical control task — motor drive, steering, and sensor reading — in real time. These two processors communicate over a dedicated UART serial link, keeping vision latency completely isolated from motion control.
