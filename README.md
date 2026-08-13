@@ -177,30 +177,6 @@ A micro-ROS firmware for the ESP32 that bridges ROS 2 Jazzy with the robot's har
 
 ##### Hardware
 
-| Component | Details |
-|---|---|
-| **Microcontroller** | ESP32 |
-| **Motor Driver** | BTS7960 |
-| **Steering** | Servo (PWM) |
-| **Distance Sensors** | 4× VL53L0X (Left / Front / Right / Back) |
-| **IMU** | BNO086 (I2C, NDOF rotation vector) |
-
-##### Pin Configuration
-
-| Pin | GPIO | Description |
-|---|---|---|
-| RPWM | 25 | Motor forward PWM |
-| LPWM | 26 | Motor reverse PWM |
-| R_EN | 27 | BTS7960 right enable |
-| L_EN | 14 | BTS7960 left enable |
-| SERVO_PIN | 13 | Steering servo |
-| TOF_SDA | 21 | I2C data |
-| TOF_SCL | 22 | I2C clock |
-| XSHUT_LEFT | 32 | ToF left shutdown |
-| XSHUT_FRONT | 33 | ToF front shutdown |
-| XSHUT_RIGHT | 4 | ToF right shutdown |
-| XSHUT_BACK | 15 | ToF back shutdown |
-
 ##### ROS 2 Topics
 
 | Topic | Type | Direction |
