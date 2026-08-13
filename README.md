@@ -188,6 +188,7 @@ No part of the chassis contacts the track boundary walls during any manoeuvre
 A redesign iteration in SolidWorks takes ~20 minutes. The equivalent physical rework — reprint, reassemble, recalibrate — takes 4–8 hours. This workflow resulted in only one physical chassis revision after the simulation stage.
 
 
+
 ## ⚡️ Electronic Systems
 
 Our robot's electronic architecture is built around a clear separation of responsibilities: a Raspberry Pi 5 handles all vision processing and high-level navigation, while an ESP32 microcontroller manages every time-critical control task — motor drive, steering, and sensor reading — in real time. These two processors communicate over a dedicated UART serial link, keeping vision latency completely isolated from motion control.
