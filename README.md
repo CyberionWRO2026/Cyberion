@@ -18,13 +18,13 @@ Our robot's electronic architecture is built around a clear separation of respon
 
 Power is distributed across three independent paths: the drive motor is fed directly from the 4S Li-ion battery through a BTS7960 H-bridge driver, the steering servo runs from a dedicated regulated Rail A, and all computing and sensing electronics share a separate regulated Rail B. This three-way separation ensures that motor switching transients and servo current spikes never reach the Raspberry Pi 5, ESP32, or sensors. A full Fritzing wiring diagram documenting every power and signal connection is included in the repository.
 
-###Components
+### Components
 
 The diagram below shows the full wiring architecture — power distribution paths, signal connections, and communication links between all major components. A complete Fritzing source file is included in the /fritzing directory.
 
 <img width="2955" height="2922" alt="fritzing_bb" src="https://github.com/user-attachments/assets/d4efde9e-e6ad-4282-b579-da74d1c84d9d" />
 
-####Battery — Li-ion 18650 (×4, 4S Pack)
+#### Battery — Li-ion 18650 (×4, 4S Pack)
 
 The robot is powered by a 4S Li-ion battery pack consisting of four 3.7 V, 2200 mAh 18650 cells connected in series. The pack provides 14.8 V nominal voltage and reaches 16.3 V when fully charged. It stores 32.56 Wh, with approximately 22.79 Wh usable at 70% DoD. The measured runtime under full competition load is 95 minutes. The cells are rated for 2.2 A continuous discharge (1C) and 4.4 A burst discharge (2C), with a system low-voltage cut-off at 12.0 V.
 
