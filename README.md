@@ -1,6 +1,7 @@
 # Cyberion
 Autonomous Ackermann-steering vehicle developed for the WRO Future Engineers 2026 competition. Includes mechanical design, electronics, control software, computer vision, sensor integration, and engineering documentation.
 We are a team of three students who share more than just a passion for robotics — we share three years of friendship, late nights debugging code, and the relentless drive to build something extraordinary. What started as a shared curiosity for technology has evolved into a serious engineering partnership, where each of us brings a unique and irreplaceable skill set to the table.
+
 <img width="1000" height="850" alt="image" src="https://github.com/user-attachments/assets/fb4b2cf9-931a-49ba-a13e-d00ef85702c0" />
 <p align="center">
 
@@ -96,3 +97,53 @@ Four VL53L0X time-of-flight sensors provide distance measurements in the front, 
 | LM2596 Rail A          | 16.3 V → 5 V      | 0.128 A         | —            | Battery        |
 | LM2596 Rail B          | 16.3 V → 5 V      | 0.400 A         | —            | Battery        |
 | 4S Li-ion Pack (total) | 14.8 V nominal    | 0.744 A         | —            | Source         |
+
+
+### Power Budget
+
+Every watt counts in competition. Here's exactly where the power goes — calculated from measured values, not estimates.
+
+The brain (Rail B — Logic & Sensors)
+The Pi 5 with camera draws 0.913 A, the ESP32 adds 0.083 A, and four ToF sensors contribute 0.064 A — totalling 1.060 A at 5.03 V. That's 5.332 W at the rail, which means the battery has to supply 6.441 W to cover the LM2596's 83.1% conversion loss.
+
+The muscles (Rail A — Servo)
+The steering servo runs on its own isolated rail. At 0.347 A × 5.02 V = 1.742 W out, the battery delivers 2.061 W through the LM2596 at 84.5% efficiency — completely isolated from everything else.
+
+The drive (Motor — Direct)
+The motor bypasses regulation entirely, fed straight from the pack at 72% PWM. Effective voltage: 11.20 V, current: 0.300 A — 3.36 W of mechanical output, drawing 0.216 A directly from the battery.
+
+Total Battery Load
+|           Path           | Battery Current | Battery Power |
+|:------------------------:|:---------------:|:-------------:|
+| Rail B — Logic & Sensors | 0.400 A         | 6.441 W       |
+| Rail A — Servo           | 0.128 A         | 2.061 W       |
+| Motor — Direct           | 0.216 A         | 3.370 W       |
+| Total                    | 0.744 A         | 11.872 W      |
+
+Runtime — the bottom line
+
+With 22.79 Wh of usable energy and an average draw of 12.45 W, the math gives 110 minutes. Real-world testing came in at 95 minutes  — a healthy margin that accounts for acceleration peaks and steering transients the steady-state model doesn't capture.
+Calculated: 22.79 ÷ 12.45 = 110 min · Measured: 95 min 
+We run two identical 4S packs in rotation: one powers the robot, the other charges. A full competition run takes well under 95 minutes, so a fresh pack is always ready before the other is depleted.
+
+### Connection & Pin Assignment
+|             From            |               To              |          Signal         |
+|:---------------------------:|:-----------------------------:|:-----------------------:|
+| ESP32 GPIO 25               | BTS7960 RPWM                  | Motor PWM — forward     |
+| ESP32 GPIO 26               | BTS7960 LPWM                  | Motor PWM — reverse     |
+| ESP32 GPIO 27 + 14          | BTS7960 R_EN + L_EN           | Driver enable           |
+| ESP32 GPIO 13               | MG996R signal                 | Steering PWM 50 Hz      |
+| ESP32 GPIO 21 (SDA)         | BNO086 SDA + VL53L0X ×4 SDA   | Shared I²C data 400 kHz |
+| ESP32 GPIO 22 (SCL)         | BNO086 SCL + VL53L0X ×4 SCL   | Shared I²C clock        |
+| ESP32 GPIO 32 / 33 / 4 / 15 | VL53L0X #1–#4 XSHUT           | Address assignment      |
+| ESP32 GPIO 16 (RX2)         | Pi 5 GPIO 14 (TXD)            | UART Pi → ESP32         |
+| ESP32 GPIO 17 (TX2)         | Pi 5 GPIO 15 (RXD)            | UART ESP32 → Pi         |
+| Rail B 5 V                  | ESP32 VIN + Pi 5 + VL53L0X ×4 | Logic & sensor supply   |
+| ESP32 3V3                   | BNO086 VIN                    | IMU supply              |
+| Battery +                   | BTS7960 B+                    | Motor power             |
+| Common GND                  | All components                | Single-point ground     |
+and the next Figure presents the complete electrical and electronic architecture of the robot, showing the power distribution paths, regulated voltage rails, communication interfaces, motor and steering control, and connections between the Raspberry Pi 5, ESP32, and all onboard sensors.
+
+<img width="1402" height="1122" alt="image" src="https://github.com/user-attachments/assets/dbc7804b-9491-4442-af88-4420a9d2f3ac" />
+
+
