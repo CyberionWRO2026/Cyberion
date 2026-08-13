@@ -49,6 +49,12 @@ The chassis is split into two functional levels:
 | Lower | Ackermann steering linkage, JSUMO Titan drive motor, BTS7960 motor driver, LEGO differential, custom pinion, rear axle shafts, MG996R servo, esp32 |
 | Upper |                                                    Raspberry Pi 5, battery holders, IMU (BNO086)                                                   |
 
+<img width="839" height="564" alt="image" src="https://github.com/user-attachments/assets/3978aceb-9c03-4745-8456-b726257da2ed" />
+
+<img width="828" height="576" alt="image" src="https://github.com/user-attachments/assets/e424f555-3fbb-4d49-895b-09a1c3733ebe" />
+
+
+
 ### Vehicle specifications:
 
 |            Parameter            |     Value     |
@@ -65,19 +71,122 @@ The chassis is split into two functional levels:
 
 All parts are printed in PETG at 100% infill for structural components.
 
-|        Part Name        |     File in Repository     |                                              Location on Robot                                              |             STL            |
-|:-----------------------:|:--------------------------:|:-----------------------------------------------------------------------------------------------------------:|:--------------------------:|
-| Lower Chassis (Level 1) | base1.STL                  | Main structural base — houses drivetrain, steering, and servo                                               | base1.STL                  |
-| Upper Chassis (Level 2) | base2.STL                  | Top platform — holds Raspberry Pi 5 and battery                                                             | base2.STL                  |
-| Flange Bearing Housing  | Flange Bearing Housing.STL | Rear axle — holds 626RS bearings that support the rear axle shafts                                          | Flange Bearing Housing.STL |
-| Motor Holder            | Motor Holder .STL          | Lower chassis — mounts the JSUMO Titan DC motor in place                                                    | Motor Holder .STL          |
-| LEGO Wheel Adapter      | LEGOWHEEL.STL              | Rear axle — adapts LEGO axle shaft to the wheel hub                                                         | LEGOWHEEL.STL              |
-| Camera Housing          | camera housing.STL         | Front upper section — holds the Raspberry Pi Camera Module V2                                               | camera housing.STL         |
-| Steering Knuckle        | fix part for wheel.STL     | Front axle — rotates around the kingpin axis to steer each front wheel                                      | fix part for wheel.STL     |
-| Steering Arm            | new steering arm.STL       | Front axle — connects tie rod to the steering knuckle to form the Ackermann linkage                         | new steering arm.STL       |
-| Custom Pinion Gear      | pinion.STL                 | Lower chassis — transfers torque from the motor shaft to the LEGO differential (20T, M1, 20°)               | pinion.STL                 |
-| Servo Horn              | servo horn.STL             | Steering servo output shaft — links servo to the tie rod with a 20 mm effective arm length                  | servo horn.STL             |
-| Tie Rod                 | tie rod.STL                | Between servo horn and steering knuckles — transmits servo displacement to both front wheels simultaneously | tie rod.STL                |
+|        Part Name        |     File in Repository     |                                              Location on Robot                                              |
+|:-----------------------:|:--------------------------:|:-----------------------------------------------------------------------------------------------------------:|
+| Lower Chassis (Level 1) | base1.STL                  | Main structural base — houses drivetrain, steering, and servo                                               |
+| Upper Chassis (Level 2) | base2.STL                  | Top platform — holds Raspberry Pi 5 and battery                                                             |
+| Flange Bearing Housing  | Flange Bearing Housing.STL | Rear axle — holds 626RS bearings that support the rear axle shafts                                          |
+| Motor Holder            | Motor Holder .STL          | Lower chassis — mounts the JSUMO Titan DC motor in place                                                    |
+| LEGO Wheel Adapter      | LEGOWHEEL.STL              | Rear axle — adapts LEGO axle shaft to the wheel hub                                                         |
+| Camera Housing          | camera housing.STL         | Front upper section — holds the Raspberry Pi Camera Module V2                                               |
+| Steering Knuckle        | fix part for wheel.STL     | Front axle — rotates around the kingpin axis to steer each front wheel                                      |
+| Steering Arm            | new steering arm.STL       | Front axle — connects tie rod to the steering knuckle to form the Ackermann linkage                         |
+| Custom Pinion Gear      | pinion.STL                 | Lower chassis — transfers torque from the motor shaft to the LEGO differential (20T, M1, 20°)               |
+| Servo Horn              | servo horn.STL             | Steering servo output shaft — links servo to the tie rod with a 20 mm effective arm length                  |
+| Tie Rod                 | tie rod.STL                | Between servo horn and steering knuckles — transmits servo displacement to both front wheels simultaneously |
+
+### Steering System — Ackermann Geometry
+
+Ackermann geometry was selected because it enforces the rolling constraint across the full steering range: both front wheels trace concentric arcs around a common instantaneous centre, eliminating lateral tyre scrub and producing a consistent, predictable cornering radius.
+
+The steering arm angle was iterated in SolidWorks from an initial parallel (non-compliant) configuration until simulation confirmed the inner wheel consistently steers to a larger angle than the outer wheel across the full servo travel.
+
+<img width="813" height="505" alt="image" src="https://github.com/user-attachments/assets/e98d7759-79a4-425a-b6cd-15438c130657" />
+
+
+#### Linkage parameters:
+
+|                Parameter                |  Value  |
+|:---------------------------------------:|:-------:|
+| Kingpin axis separation (T)             | 100 mm  |
+| Wheelbase (L)                           | 170 mm  |
+| T/L ratio (Ackermann condition)         | 0.588   |
+| Steering arm length                     | 40 mm   |
+| Steering arm angle from transverse axis | 23.5°   |
+| Tie rod length                          | 70 mm   |
+| Custom servo horn effective length      | 20 mm   |
+| Inner wheel max angle                   | 30.22°  |
+| Outer wheel max angle                   | 22.24°  |
+| Measured minimum turning radius         | ~346 mm |
+
+Kingpin axes each use a 626RS deep-groove ball bearing (6 mm ID, 19 mm OD) to minimise friction and ensure full servo torque reaches the wheels.
+
+Actuator: MG996R servo (all-metal gear train). Required steering torque: 0.028 N·m. Available torque at 4.8 V: 0.922 N·m → safety margin of 32.8×.
+
+The servo is mounted directly through a rectangular aperture in the lower chassis plate — no bracket — to eliminate any compliance joint that could add backlash under repeated steering reversals.
+
+### Drivetrain — Rear-Wheel Drive with Mechanical Differential
+
+Drive motor: JSUMO Titan DC, 12 V nominal, 1000 RPM no-load, 7.5 kg·cm stall torque.
+
+#### Power transmission chain:
+
+```mermaid
+graph TD
+    A[Motor Shaft] --> B[Custom PETG Pinion\n20T · M1 · 20° pressure angle]
+    B --> C[LEGO Differential Input Gear\n28T]
+    C --> D[LEGO Bevel Gear Set]
+    D --> E[Two Rear Axle Shafts]
+    E --> F[Rear Wheels]
+```
+
+<img width="975" height="552" alt="image" src="https://github.com/user-attachments/assets/940c50c1-750d-4cba-aa4a-c04223cb552c" />
+
+
+|           Parameter          |   Value  |
+|:----------------------------:|:--------:|
+| Overall gear ratio           | 1.4 : 1  |
+| Wheel speed                  | 714 RPM  |
+| Rear wheel diameter          | 43.2 mm  |
+| Theoretical top speed        | 1.61 m/s |
+| Measured top speed (75% PWM) | 1.21 m/s |
+
+PWM is capped at 75% in software so the effective motor voltage stays at ≈ 12.6 V from the 16.8 V fully-charged 4S battery.
+
+The LEGO differential was chosen over a fully printed differential because FDM bevel gears showed visible mesh interference and high drag torque from layer-line surface roughness. The injection-moulded LEGO set provides a consistent, low-friction mesh.
+
+### Design iterations:
+
+| # |                            Problem observed                            |                              Change made                              |                            Outcome                            |
+|:-:|:----------------------------------------------------------------------:|:---------------------------------------------------------------------:|:-------------------------------------------------------------:|
+| 1 | Fully printed differential: bevel mesh interference, high drag torque  | Replaced with LEGO differential + custom mounting interface           | Internal drag reduced; mesh quality repeatable between builds |
+| 2 | Off-the-shelf pinion: poor fit on D-shaft, poor mesh with differential | Custom SolidWorks pinion matched to both interfaces                   | Backlash and tooth-tip loading reduced                        |
+| 3 | Printed axle shafts: lower torsional strength, complex assembly        | Standard LEGO axles retained by custom PETG bushings in bearing bores | Torsional failure risk eliminated; assembly simplified        |
+
+### URDF Export
+
+The SolidWorks assembly was exported to URDF using the sw_urdf_exporter plugin (v1.6.0). The export produced the full link hierarchy, mass and inertia tensors computed directly from the CAD material assignment, and one STL mesh per link.
+
+The URDF file serves as the formal handoff between the mechanical and software teams — the mechanical team is responsible for geometric and inertial accuracy, and the software team uses it as the definitive robot model for all simulation and motion planning work.
+
+Electronic component masses not modelled in SolidWorks were added manually as point masses at their defined mounting locations directly inside the URDF file.
+
+The file is located at models/urdf2/urdf/urdf2.urdf and contains:
+
+Link hierarchy with mass and inertia tensors
+One STL mesh per link, referenced from models/urdf2/meshes/
+Sensor frame placements for the four ToF sensors, the IMU, and the camera
+Gazebo Ackermann steering system plugin
+
+<img width="907" height="492" alt="image" src="https://github.com/user-attachments/assets/4a3badf0-4a4f-4586-bbca-6be508038941" />
+
+
+### Simulation — Gazebo Harmonic 8.11.0
+
+The URDF model was imported into Gazebo and a simulation environment replicating the official WRO Future Engineers 2026 competition map was constructed. The robot was driven autonomously through the complete challenge sequence in simulation before any physical part was printed.
+
+This step validated both the software algorithms and the mechanical configuration — confirming that:
+
+The Ackermann steering geometry produces the correct turn radii at maximum servo deflection
+Sensor mounting positions achieve the required field-of-view coverage over the actual field geometry
+The centre-of-gravity height stays within the rollover stability limit at maximum operating speed
+No part of the chassis contacts the track boundary walls during any manoeuvre
+
+<img width="865" height="472" alt="image" src="https://github.com/user-attachments/assets/d0375e61-a9a1-4952-97d5-5ea2e0ee2312" />
+
+
+A redesign iteration in SolidWorks takes ~20 minutes. The equivalent physical rework — reprint, reassemble, recalibrate — takes 4–8 hours. This workflow resulted in only one physical chassis revision after the simulation stage.
+
 
 ## ⚡️ Electronic Systems
 
