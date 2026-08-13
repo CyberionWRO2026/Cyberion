@@ -259,18 +259,9 @@ Then verify the topics are publishing:
 ros2 topic hz /imu /tof_front /tof_left /tof_right /tof_back /odom
 ```
 
-#### motor_controller — WRO 2026 Future Engineers
+#### motor_controller
 
 ROS 2 Jazzy package that implements the robot's motion logic for the WRO 2026 Future Engineers competition. It connects to the Gazebo Harmonic simulation via `ros_gz_bridge` and runs two nodes: a classical-CV color detector and a 4-state FSM motion controller.
-
-##### System Requirements
-
-| Component | Version |
-|---|---|
-| OS | Ubuntu 24.04 |
-| ROS 2 | Jazzy |
-| Gazebo | Harmonic 8.x |
-| Python | 3.x |
 
 ##### Package Structure
 
