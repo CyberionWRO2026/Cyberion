@@ -258,3 +258,136 @@ Then verify the topics are publishing:
 ```bash
 ros2 topic hz /imu /tof_front /tof_left /tof_right /tof_back /odom
 ```
+
+#### motor_controller — WRO 2026 Future Engineers
+
+ROS 2 Jazzy package that implements the robot's motion logic for the WRO 2026 Future Engineers competition. It connects to the Gazebo Harmonic simulation via `ros_gz_bridge` and runs two nodes: a classical-CV color detector and a 4-state FSM motion controller.
+
+##### System Requirements
+
+| Component | Version |
+|---|---|
+| OS | Ubuntu 24.04 |
+| ROS 2 | Jazzy |
+| Gazebo | Harmonic 8.x |
+| Python | 3.x |
+
+##### Package Structure
+
+```
+ros2_ws/src/motor_controller/
+├── config/
+│   ├── bridge.yaml          # ros_gz_bridge topic map
+│   └── params.yaml          # all tunable parameters
+├── include/motor_controller/
+│   ├── kalman.hpp           # Kalman filter (roll/pitch)
+│   └── pid_controller.hpp   # reusable PID class
+├── launch/
+│   └── bridge.launch.py     # launches bridge + both nodes
+├── scripts/
+│   └── motor_controller.py  # camera color detector node
+├── src/
+│   ├── color_motor_controller.cpp  # FSM motion controller node
+│   └── kalman.cpp
+├── CMakeLists.txt
+└── package.xml
+```
+
+##### Nodes
+
+### `camera_subscriber` (`motor_controller.py`)
+Subscribes to `/camera` and publishes the detected color on `/detected_color`.
+
+| Topic | Type | Direction |
+|---|---|---|
+| `/camera` | `sensor_msgs/Image` | Subscribe |
+| `/detected_color` | `std_msgs/String` | Publish (`RED` / `GREEN` / `MAGENTA` / `NONE`) |
+
+###### `color_motor_controller` (`color_motor_controller.cpp`)
+4-state FSM that subscribes to all sensors and publishes motion commands.
+
+| Topic | Type | Direction |
+|---|---|---|
+| `/tof_front` | `sensor_msgs/LaserScan` | Subscribe |
+| `/tof_back` | `sensor_msgs/LaserScan` | Subscribe |
+| `/tof_left` | `sensor_msgs/LaserScan` | Subscribe |
+| `/tof_right` | `sensor_msgs/LaserScan` | Subscribe |
+| `/imu` | `sensor_msgs/Imu` | Subscribe |
+| `/odom` | `nav_msgs/Odometry` | Subscribe |
+| `/detected_color` | `std_msgs/String` | Subscribe |
+| `/cmd_vel` | `geometry_msgs/Twist` | Publish |
+| `/fsm_state` | `std_msgs/String` | Publish |
+| `/lap_complete` | `std_msgs/Bool` | Publish |
+
+##### Build
+
+```bash
+cd ~/ros2_ws
+colcon build --packages-select motor_controller --symlink-install
+source install/setup.bash
+```
+
+> Use `--symlink-install` so that changes to `params.yaml` and `motor_controller.py` take effect immediately without rebuilding.
+
+##### Running
+
+###### Step 1 — Start Gazebo (separate terminal)
+
+```bash
+cd ~/Desktop/wro2026_sim
+export GZ_SIM_RESOURCE_PATH=$PWD/models:$PWD/worlds
+gz sim -r worlds/world.sdf
+```
+
+###### Step 2 — Launch the bridge and both nodes
+
+**Open Challenge:**
+```bash
+cd ~/ros2_ws
+source install/setup.bash
+ros2 launch motor_controller bridge.launch.py challenge_mode:=open
+```
+
+**Obstacle Challenge:**
+```bash
+cd ~/ros2_ws
+source install/setup.bash
+ros2 launch motor_controller bridge.launch.py challenge_mode:=obstacle
+```
+
+##### Monitoring
+
+```bash
+# FSM state and lap counter
+ros2 topic echo /fsm_state
+
+# Detected color from camera
+ros2 topic echo /detected_color
+
+# Lap completion signal
+ros2 topic echo /lap_complete
+
+# Sensor publish rates
+ros2 topic hz /imu /tof_front /tof_left /tof_right /tof_back /odom /camera
+```
+
+##### Parameters
+
+All parameters are loaded from `config/params.yaml`. With `--symlink-install`, editing the file takes effect on the next launch without rebuilding.
+
+| Group | Key | Default | Description |
+|---|---|---|---|
+| `challenge_mode` | — | `"open"` | `"open"` or `"obstacle"` |
+| `speed` | `straight` | `0.5` | m/s in STRAIGHT_DRIVING |
+| `speed` | `turning` | `0.15` | m/s in TURNING |
+| `speed` | `avoidance` | `0.35` | m/s in OBSTACLE_AVOIDANCE |
+| `turn` | `front_trigger_dist` | `0.40` | m, tof_front threshold to enter TURNING |
+| `turn` | `angular_speed` | `0.9` | angular.z while turning |
+| `turn` | `total_turns_for_finish` | `12` | 3 laps × 4 corners |
+| `avoid` | `steer_angle` | `0.5` | angular.z while avoiding obstacle |
+| `avoid` | `deadzone_duration_sec` | `0.5` | seconds to ignore re-detection after avoidance |
+| `magenta` | `deadzone_sec` | `3.0` | seconds between magenta lap counts |
+| `pid` | `kp` | `2.0` | wall-centering proportional gain |
+| `pid` | `kd` | `0.3` | wall-centering derivative gain |
+| `safety` | `min_front_dist` | `0.12` | m, emergency stop threshold |
+| `safety` | `min_side_dist` | `0.06` | m, emergency lateral guard |
