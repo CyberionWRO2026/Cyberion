@@ -18,9 +18,7 @@ Cyberion is an autonomous vehicle built for the WRO Future Engineers 2026 compet
 ## Design Methodology
 
 Requirements
-
-    ↓
-    
+    ↓   
 Concept Design (SolidWorks sketches + Gazebo kinematics check)
     ↓
 Detailed Design (full SolidWorks assembly)
