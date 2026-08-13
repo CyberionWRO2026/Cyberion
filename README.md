@@ -11,7 +11,7 @@ Ibrahim Jneed & Lujain Alahmad form our hardware and electrical engineering duo.
 Together, we do not just build robots — we engineer solutions. Every decision we make is driven by data, testing, and a shared obsession with pushing our vehicle's performance to its absolute limit.
 
 
-⚡️ Electronic Systems
+## ⚡️ Electronic Systems
 
 Our robot's electronic architecture is built around a clear separation of responsibilities: a Raspberry Pi 5 handles all vision processing and high-level navigation, while an ESP32 microcontroller manages every time-critical control task — motor drive, steering, and sensor reading — in real time. These two processors communicate over a dedicated UART serial link, keeping vision latency completely isolated from motion control.
 
