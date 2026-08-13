@@ -28,6 +28,27 @@ graph TD
     G --> H[Performance Tuning]
 ```
 
+A redesign iteration in SolidWorks takes ~20 minutes. The equivalent physical rework takes 4–8 hours. This workflow resulted in only one physical chassis revision after the simulation stage.
+
+## Mobility & Mechanical Design
+
+This folder contains all mechanical design assets for the Cyberion autonomous vehicle, built for the World Robot Olympiad (WRO) Future Engineers 2026 competition.
+
+### Overview
+
+The mechanical system was designed entirely in SolidWorks before any physical part was manufactured. The complete CAD assembly was exported as a URDF and validated in Gazebo Harmonic 8.11.0 on the official WRO 2026 competition map — confirming steering geometry, sensor field-of-view, centre-of-gravity height, and clearances — before a single part was printed.
+
+All custom structural components are FDM-printed PETG. PETG was chosen over PLA for its higher impact resistance (notched Izod ≈ 6 kJ/m² vs. 3.5 kJ/m²) and lower moisture sensitivity.
+
+### Chassis Architecture — Two-Level Layout
+
+The chassis is split into two functional levels:
+
+| Level |                                                                      Contents                                                                      |   |   |   |
+|:-----:|:--------------------------------------------------------------------------------------------------------------------------------------------------:|---|---|---|
+| Lower | Ackermann steering linkage, JSUMO Titan drive motor, BTS7960 motor driver, LEGO differential, custom pinion, rear axle shafts, MG996R servo, esp32 |   |   |   |
+| Upper | Raspberry Pi 5, battery holders, IMU (BNO086)                                                                                                      |   |   |   |
+|       |                                                                                                                                                    |   |   |   |
 ## ⚡️ Electronic Systems
 
 Our robot's electronic architecture is built around a clear separation of responsibilities: a Raspberry Pi 5 handles all vision processing and high-level navigation, while an ESP32 microcontroller manages every time-critical control task — motor drive, steering, and sensor reading — in real time. These two processors communicate over a dedicated UART serial link, keeping vision latency completely isolated from motion control.
