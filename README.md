@@ -243,7 +243,7 @@ pio run --target upload
 pio device monitor --baud 115200
 ```
 
-## Running with ROS 2
+##### Running with ROS 2
 
 After flashing, start the micro-ROS agent on the Raspberry Pi to connect the ESP32 to the ROS 2 network:
 
